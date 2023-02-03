@@ -123,6 +123,9 @@ void ServerNode::setup_config()
   get_parameter("translation_y", server_node_config.translation_y);
   get_parameter("rotation", server_node_config.rotation);
   get_parameter("scale", server_node_config.scale);
+  get_parameter("negative_x", server_node_config.negative_x);
+  get_parameter("negative_y", server_node_config.negative_y);
+  get_parameter("set_full_battery", server_node_config.set_full_battery);
 }
 
 bool ServerNode::is_ready()
@@ -263,6 +266,11 @@ void ServerNode::transform_fleet_to_rmf(
   _rmf_frame_location.yaw =
       _fleet_frame_location.yaw - server_node_config.rotation;
 
+  if(server_node_config.negative_x == true)
+    _rmf_frame_location.x = -_rmf_frame_location.x;
+  if(server_node_config.negative_y == true)
+    _rmf_frame_location.y = -_rmf_frame_location.y;
+
   _rmf_frame_location.t = _fleet_frame_location.t;
   _rmf_frame_location.level_name = _fleet_frame_location.level_name;
 }
@@ -301,6 +309,11 @@ void ServerNode::transform_rmf_to_fleet(
   _fleet_frame_location.y = translated[1];
   _fleet_frame_location.yaw =
       _rmf_frame_location.yaw + server_node_config.rotation;
+
+  if(server_node_config.negative_x == true)
+    _fleet_frame_location.x = -_fleet_frame_location.x;
+  if(server_node_config.negative_y == true)
+    _fleet_frame_location.y = -_fleet_frame_location.y;
 
   _fleet_frame_location.t = _rmf_frame_location.t;
   _fleet_frame_location.level_name = _rmf_frame_location.level_name;
@@ -350,6 +363,9 @@ void ServerNode::update_state_callback()
   {
     rmf_fleet_msgs::msg::RobotState ros_rs;
     to_ros_message(ff_rs, ros_rs);
+
+  if(server_node_config.set_full_battery == true)
+      ros_rs.battery_percent = 100;
 
     WriteLock robot_states_lock(robot_states_mutex);
     auto it = robot_states.find(ros_rs.name);

@@ -23,10 +23,14 @@
     <param name="update_state_frequency" value="20.0"/>
     <param name="publish_state_frequency" value="2.0"/>
 
-    <param name="translation_x" value="-15.77"/>
-    <param name="translation_y" value="9.39"/>
-    <param name="rotation" value="0.0"/>
+    <param name="translation_x" value="8.58"/>
+    <param name="translation_y" value="43.5"/>
+    <param name="rotation" value="-1.57"/>
     <param name="scale" value="1.0"/>
+    <param name="negative_x" value="false"/>
+    <param name="negative_y" value="false"/>
+    <param name="set_full_battery" value="true"/>
+
 
   </node>
 

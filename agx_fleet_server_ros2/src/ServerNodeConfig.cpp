@@ -51,6 +51,9 @@ void ServerNodeConfig::print_config() const
   printf("  translation y (meters): %.3f\n", translation_y);
   printf("  rotation (radians): %.3f\n", rotation);
   printf("  scale: %.3f\n", scale);
+  printf("  negative_x(bool) : %d\n", negative_x);
+  printf( " negative_y(bool) : %d\n", negative_y);
+  printf( " set_full_battery(bool) : %d\n", set_full_battery);
 }
 
 ServerConfig ServerNodeConfig::get_server_config() const

@@ -53,6 +53,12 @@ struct ServerNodeConfig
   double translation_x = 0.0;
   double translation_y = 0.0;
 
+// 是否将坐标轴正负翻转
+  bool negative_x = false;
+  bool negative_y = false;
+
+  bool set_full_battery = true;
+
   void print_config() const;
 
   ServerConfig get_server_config() const;

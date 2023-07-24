@@ -154,7 +154,8 @@ void ServerNode::start(Fields _fields)
       rclcpp::CallbackGroupType::MutuallyExclusive);
 
   update_state_timer = create_wall_timer(
-      100ms, std::bind(&ServerNode::update_state_callback, this),
+      std::chrono::seconds(1) / server_node_config.update_state_frequency,
+      std::bind(&ServerNode::update_state_callback, this),
       update_state_callback_group);
 
   // --------------------------------------------------------------------------
@@ -356,13 +357,22 @@ void ServerNode::handle_destination_request(
 
 void ServerNode::update_state_callback()
 {
+  //static int cout,cout_2;
+  //cout++;
   std::vector<messages::RobotState> new_robot_states;
   fields.server->read_robot_states(new_robot_states);
+
+   while(new_robot_states.empty())
+   {
+     fields.server->read_robot_states(new_robot_states); //阻塞
+     //return; //轮询
+   };
 
   for (const messages::RobotState& ff_rs : new_robot_states)
   {
     rmf_fleet_msgs::msg::RobotState ros_rs;
     to_ros_message(ff_rs, ros_rs);
+  //RCLCPP_INFO(get_logger(),"update_robot:%s %d %d %d %f",ros_rs.name.c_str(),cout,ros_rs.location.t.sec,ros_rs.location.t.nanosec,server_node_config.update_state_frequency);
 
   if(server_node_config.set_full_battery == true)
       ros_rs.battery_percent = 100;

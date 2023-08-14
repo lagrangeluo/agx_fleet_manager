@@ -104,6 +104,7 @@ void ServerNode::setup_config()
   get_parameter(
       "destination_request_topic",
       server_node_config.destination_request_topic);
+  get_parameter("nav_map_path",server_node_config.nav_map_path);
   get_parameter("dds_domain", server_node_config.dds_domain);
   get_parameter("dds_robot_state_topic",
       server_node_config.dds_robot_state_topic);
@@ -145,6 +146,47 @@ void ServerNode::start(Fields _fields)
   }
 
   using namespace std::chrono_literals;
+
+  //parse the nav map yaml file
+  YAML::Node nav_map_yaml = YAML::LoadFile(server_node_config.nav_map_path);
+  YAML::Node origin = nav_map_yaml["origin"];
+  origin_x = origin[0].as<float>();
+  origin_y = origin[1].as<float>();
+
+  //init the map parameter
+  auto map_data_sub_opt = rclcpp::SubscriptionOptions();
+
+  map_data_sub = this->create_subscription<nav_msgs::msg::OccupancyGrid>(
+      "floorplan",
+      rclcpp::QoS(10),
+      [&](nav_msgs::msg::OccupancyGrid::UniquePtr msg)
+      {
+        width = msg->info.width * msg->info.resolution;
+        height = msg->info.height * msg->info.resolution;
+
+        //make container of changed parameter
+        std::vector<rclcpp::Parameter> trans_parameters;
+        trans_parameters.push_back(rclcpp::Parameter("translation_x", origin_x));
+        trans_parameters.push_back(rclcpp::Parameter("translation_y", height+origin_y));
+        set_parameters(trans_parameters);
+
+        //reget the paramter of trans
+        get_parameter("translation_x", server_node_config.translation_x);
+        get_parameter("translation_y", server_node_config.translation_y);
+
+        if(width!=0 && height!=0)
+        {
+          RCLCPP_INFO(this->get_logger(),"Got map success,width: %f,height: %f",width,height);
+          if_get_map =true;
+        }
+      },
+      map_data_sub_opt);
+
+  while(!if_get_map)
+  {
+    // rclcpp::spin_some(std::make_shared(this));
+    rclcpp::spin_some(shared_from_this());
+  }
 
   // --------------------------------------------------------------------------
   // First callback group that handles getting updates from all the clients

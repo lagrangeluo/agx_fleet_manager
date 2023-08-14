@@ -34,6 +34,7 @@ struct ServerNodeConfig
   std::string mode_request_topic = "mode_request";
   std::string path_request_topic = "path_request";
   std::string destination_request_topic = "destination_request";
+  std::string nav_map_path = "map.yaml";
 
   int dds_domain = 42;
   std::string dds_robot_state_topic = "robot_state";

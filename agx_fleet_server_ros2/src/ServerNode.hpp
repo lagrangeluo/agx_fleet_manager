@@ -27,6 +27,9 @@
 
 #include <rcl_interfaces/msg/parameter_event.hpp>
 
+#include <nav_msgs/msg/occupancy_grid.hpp>
+#include <yaml-cpp/yaml.h>
+
 #include <rmf_fleet_msgs/msg/location.hpp>
 #include <rmf_fleet_msgs/msg/robot_state.hpp>
 #include <rmf_fleet_msgs/msg/fleet_state.hpp>
@@ -105,6 +108,16 @@ private:
   void handle_destination_request(
       rmf_fleet_msgs::msg::DestinationRequest::UniquePtr msg);
 
+  // --------------------------------------------------------------------------
+
+  rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr
+      map_data_sub;
+
+  bool if_get_map = false;
+  float width = 0;
+  float height = 0;
+  float origin_x = 0;
+  float origin_y = 0;
   // --------------------------------------------------------------------------
 
   rclcpp::CallbackGroup::SharedPtr update_state_callback_group;

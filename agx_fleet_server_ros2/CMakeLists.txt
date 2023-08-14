@@ -21,6 +21,8 @@ if (ament_cmake_FOUND)
   find_package(rmf_fleet_msgs REQUIRED)
   find_package(free_fleet REQUIRED)
   find_package(Eigen3 REQUIRED)
+  find_package(nav_msgs REQUIRED)
+  find_package(yaml-cpp REQUIRED)
 
   add_executable(agx_fleet_server_ros2
     src/main.cpp
@@ -31,6 +33,7 @@ if (ament_cmake_FOUND)
   target_link_libraries(agx_fleet_server_ros2
     ${free_fleet_LIBRARIES}
     Eigen3::Eigen
+    yaml-cpp
   )
   target_include_directories(agx_fleet_server_ros2
     PRIVATE
@@ -39,6 +42,7 @@ if (ament_cmake_FOUND)
   ament_target_dependencies(agx_fleet_server_ros2
     rclcpp
     rmf_fleet_msgs
+    nav_msgs
   )
 
   

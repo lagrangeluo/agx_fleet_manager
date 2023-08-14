@@ -38,6 +38,7 @@ void ServerNodeConfig::print_config() const
   printf("    mode request: %s\n", mode_request_topic.c_str());
   printf("    path request: %s\n", path_request_topic.c_str());
   printf("    destination request: %s\n", destination_request_topic.c_str());
+  printf("    nav_map path: %s\n", nav_map_path.c_str());
   printf("SERVER-CLIENT DDS CONFIGURATION\n");
   printf("  dds domain: %d\n", dds_domain);
   printf("  TOPICS\n");
